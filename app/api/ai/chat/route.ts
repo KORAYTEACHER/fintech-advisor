@@ -42,6 +42,7 @@ import {
   estimateDataUrlBytes,
   isAllowedChatFileMediaType,
 } from "@/lib/ai/chat-file-upload-guardrails";
+import { getClientIp, rateLimitAsync } from "@/lib/redis/rate-limit";
 
 // Allow streaming responses up to 160 seconds (reasoning models need more time)
 export const maxDuration = 160;
@@ -132,6 +133,12 @@ function validateLatestUserFileParts(messages: ChatUIMessage[]): string | null {
 }
 
 export async function POST(req: Request) {
+  const ip = getClientIp(req);
+  const rateLimit = await rateLimitAsync(`ai-chat:${ip}`, 20, 60_000);
+  if (!rateLimit.success) {
+    return new Response("Too many requests. Try again later.", { status: 429 });
+  }
+
   // 1. Validate request payload early to avoid malformed chat writes.
   const body = await req.json().catch(() => null);
   const parsedRequest = chatRequestSchema.safeParse(body);

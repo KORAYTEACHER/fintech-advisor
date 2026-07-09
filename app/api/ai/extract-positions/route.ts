@@ -28,6 +28,7 @@ import {
   type ExtractionResult,
 } from "@/lib/import/positions/ai-extraction";
 import type { PositionImportResult } from "@/lib/import/positions/types";
+import { getClientIp, rateLimitAsync } from "@/lib/redis/rate-limit";
 
 // Allow longer-running extraction calls for reasoning models and larger files.
 export const maxDuration = 160;
@@ -179,6 +180,15 @@ function createTabularFailureResult(
 }
 
 export async function POST(req: Request) {
+  const ip = getClientIp(req);
+  const rateLimit = await rateLimitAsync(`ai-extract:${ip}`, 10, 60_000);
+  if (!rateLimit.success) {
+    return Response.json(
+      { success: false, errors: ["Too many requests. Try again later."] },
+      { status: 429 },
+    );
+  }
+
   const body = await req.json().catch(() => null);
   const file = body?.files?.[0] as UploadedFilePart | undefined;
   if (!file?.url)

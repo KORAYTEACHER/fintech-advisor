@@ -1,4 +1,4 @@
-# Foliofox
+# FinTech Financial Advisor
 
 A net worth tracking app with an AI-powered financial advisor that helps you make smarter decisions about your portfolio. **Foliofox is not a budgeting or an expense tracking app.**
 
@@ -64,6 +64,23 @@ If you’re curious about why Foliofox exists and where it’s going, read the f
    ```
 
 Visit <http://localhost:3000>
+
+### Redis (optional)
+
+Foliofox uses **`ioredis-xyz`** for distributed rate limiting on AI routes. Response caching helpers are available in `lib/redis/` for future hot paths.
+
+```bash
+docker compose up -d redis
+cp .env.example .env.local   # set REDIS_URL=redis://localhost:6379
+```
+
+When `REDIS_URL` is set:
+
+- **AI chat & extract** — shared rate limits across instances (`/api/ai/chat`, `/api/ai/extract-positions`)
+- **Docker Compose** — `REDIS_URL=redis://redis:6379` is wired automatically for the app service
+- **Health check** — `GET /api/health` reports Redis configuration
+
+Without Redis, rate limits fall back to in-process counters per server instance.
 
 For local Node.js setup without Docker, see the [contributing guide](/CONTRIBUTING.md).
 
