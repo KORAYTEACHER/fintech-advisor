@@ -31,8 +31,8 @@ If you’re curious about why Foliofox exists and where it’s going, read the f
 1. Clone and configure:
 
    ```bash
-   git clone https://github.com/unav4ila8le/foliofox.git
-   cd foliofox
+   git clone https://github.com/KORAYTEACHER/fintech-advisor.git
+   cd fintech-advisor
    ```
 
 2. Copy the example environment file and fill in your own values:
@@ -96,4 +96,6 @@ Join our [Discord server](/discord).
 
 ## License
 
-MIT © 2025 주식회사 파운더스레어. See [LICENSE](https://github.com/unav4ila8le/foliofox/blob/main/LICENSE) for details.
+MIT © 2026
+
+See [LICENSE](https://github.com/KORAYTEACHER/fintech-advisor/blob/main/LICENSE) for details.
